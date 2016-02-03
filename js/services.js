@@ -1,5 +1,5 @@
 'use strict';
 
-angular.module('Services', [])
+angular.module('services', [])
 .factory('VM', ['$http', function($http) {
 }]);

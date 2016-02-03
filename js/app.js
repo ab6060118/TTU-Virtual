@@ -1,18 +1,19 @@
 'use strict';
 
-angular.module('app', ['controllers'])
+angular.module('app', ['ngRoute', 'controllers', 'services'])
+
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider
         .when('/dashboard', {
-            tmmplate: 'view/dashboard.html',
+            templateUrl: 'view/dashboard.html',
             controller: 'DashboardCtrl'
         })
-        .when('/VMs',{
-            template: 'view/vm-list.html',
+        .when('/vms',{
+            templateUrl: 'view/vm-list.html',
             controller: 'VMListCtrl'
         })
-        .when('/images', {
-            template: 'view/image-list.html',
+        .when('/image', {
+            templateUrl: 'view/image-list.html',
             controller: 'ImageListCtrl'
         })
         .otherwise({
