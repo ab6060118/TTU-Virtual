@@ -1,12 +1,12 @@
 <div class="ui container">
     <h1 class="ui header left floated">VM List</h1>
-    <button class="ui teal button right floated">
+    <button class="ui teal button right floated" ng-click="state.creating = true" ng-hide="state.creating">
         <i class="add icon"></i>
         Create VM
     </button>
     <div class="ui divider section clearing"></div>
     <div class="ui grid">
-        <div class="column eight wide">
+        <div ng-class="{'column eight wide': state.creating}">
             <div class="ui cards">
                 <div class="card">
                     <div class="content">
@@ -61,6 +61,6 @@
             </div>
         </div>
 
-        <div class="eight wide column" ng-include="template.url"></div>
+        <div class="eight wide column" ng-include="template.url" ng-show="state.creating"></div>
     </div>
 </div>

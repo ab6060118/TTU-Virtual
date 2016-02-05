@@ -1,17 +1,17 @@
-<div class="ui segments">
+<div class="ui segments" ng-controller='VMCreateFormCtrl'>
     <div class="ui segment">
-        <h2 class="ui header left floated">Create VM</h2>
+        <h3 class="ui header">Create VM</h3>
     </div>
     <div class="ui segment">
         <form class="ui form">
             <div class="field required">
                 <label for="vm-name">VM Name</label>
-                <input type="text" name="vm-name" id="vm-name" value="" placeholder="VM Name">
+                <input type="text" name="vm-name" id="vm-name" placeholder="VM Name" ng-model="data.name">
             </div>
             <div class="two fields">
                 <div class="field required">
                     <label for="vm-core">Core</label>
-                    <select class="ui fluid dropdown" name="vm-core">
+                    <select class="ui fluid dropdown" name="vm-core" ng-model="data.core">
                         <option value="">Core</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -20,22 +20,22 @@
                 </div>
                 <div class="field required">
                     <label for="vm-memory">Memory</label>
-                    <select class="ui fluid dropdown" name="vm-memory">
+                    <select class="ui fluid dropdown" name="vm-memory" ng-model="data.memory">
                         <option value="">Memory</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+                        <option value="2">2 GB</option>
+                        <option value="3">3 GB</option>
+                        <option value="4">4 GB</option>
                     </select>
                 </div>
             </div>
             <div class="field required">
                 <label for="vm-template">Template</label>
-                <select class="ui fluid dropdown" name="vm-template">
+                <select class="ui fluid dropdown" name="vm-template" ng-model="data.template">
                     <option value="">Template</option>
                 </select>
             </div>
             <button class="positive ui button">Create</button>
-            <button class="negative ui button">Cancel</button>
+            <button class="negative ui button" ng-click="cancel()">Cancel</button>
         </form>
     </div>
 </div>
