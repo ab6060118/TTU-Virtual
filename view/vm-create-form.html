@@ -1,0 +1,41 @@
+<div class="ui segments">
+    <div class="ui segment">
+        <h2 class="ui header left floated">Create VM</h2>
+    </div>
+    <div class="ui segment">
+        <form class="ui form">
+            <div class="field required">
+                <label for="vm-name">VM Name</label>
+                <input type="text" name="vm-name" id="vm-name" value="" placeholder="VM Name">
+            </div>
+            <div class="two fields">
+                <div class="field required">
+                    <label for="vm-core">Core</label>
+                    <select class="ui fluid dropdown" name="vm-core">
+                        <option value="">Core</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <div class="field required">
+                    <label for="vm-memory">Memory</label>
+                    <select class="ui fluid dropdown" name="vm-memory">
+                        <option value="">Memory</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field required">
+                <label for="vm-template">Template</label>
+                <select class="ui fluid dropdown" name="vm-template">
+                    <option value="">Template</option>
+                </select>
+            </div>
+            <button class="positive ui button">Create</button>
+            <button class="negative ui button">Cancel</button>
+        </form>
+    </div>
+</div>
