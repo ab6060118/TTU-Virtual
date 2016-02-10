@@ -5,57 +5,50 @@
         Create VM
     </button>
     <div class="ui divider section clearing"></div>
-    <div class="ui grid">
+    <div class="ui active centered large inline text loader" ng-show="VM.state.List.loading && !VM.state.List.loaded">Loading</div>
+    <div class="ui grid" ng-show="VM.getObjLength(VM.data.VMs) && VM.state.List.loaded">
         <div ng-class="{'column eight wide': state.creating}">
             <div class="ui cards">
-                <div class="card">
+                <div class="card" ng-repeat="(key, VM) in VM.data.VMs" ng-init="$last && doSomething()">
                     <div class="content">
-                        <h3 class="ui header left floated">Project Timeline</h3>
+                        <h3 class="ui header left floated">{{VM.name}}</h3>
+                        <div class="ui green label right floated" ng-if="VM.state == 'Running'">Running</div>
+                        <div class="ui red label right floated" ng-if="VM.state == 'PoweredOff'">Power Off</div>
+                        <div class="ui active small inline loader right floated" ng-if="VM.state == 'Starting' || VM.state == 'Closing'"></div>
+                        <!--
                         <div class="ui icon top right floated pointing dropdown button">
                             <i class="setting icon"></i>
                             <div class="menu">
                                 <div class="item">Settings</div>
                             </div>
                         </div>
+                        -->
                     </div>
                     <div class="content">
-                        <div class="meta">
-                            Friends of Veronika
-                        </div>
-                        <div class="description">
-                            Elliot requested permission to view your contact details
-                        </div>
-                    </div>
-                    <div class="extra content">
-                        <div class="ui two buttons">
-                            <div class="ui basic green button">Approve</div>
-                            <div class="ui basic red button">Decline</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="content">
-                        <h3 class="ui header left floated">Project Timeline</h3>
-                        <div class="ui icon top right floated pointing dropdown button">
-                            <i class="setting icon"></i>
-                            <div class="menu">
-                                <div class="item">Settings</div>
+                        <div class="ui list">
+                            <div class="item">
+                                <i class="right triangle icon"></i>
+                                CPU : {{VM.CPUCount}}
+                            </div>
+                            <div class="item">
+                                <i class="right triangle icon"></i>
+                                Memory : {{VM.memorySize}} MB
+                            </div>
+                            <div class="item">
+                                <i class="right triangle icon"></i>
+                                OS Type : {{VM.OSTypeDesc}}
                             </div>
                         </div>
                     </div>
-                    <div class="content">
-                        <div class="meta">
-                            Friends of Veronika
-                        </div>
-                        <div class="description">
-                            Elliot requested permission to view your contact details
+                    <div class="extra content">
+                        <div class="ui three buttons">
+                            <button class="ui green button" ng-class="{disabled : VM.state != 'PoweredOff', loading : VM.state == 'Starting'}" ng-click="powerUp(VM.id)">Start</button>
+                            <button class="ui red button" ng-class="{disabled : VM.state != 'Running', loading : VM.state == 'Closing'}" ng-click="powerDown(VM.id)">Stop</button>
+                            <button class="ui yellow button" ng-class="{disabled : VM.state != 'PoweredOff'}" ng-click="">Export</button>
                         </div>
                     </div>
                     <div class="extra content">
-                        <div class="ui two buttons">
-                            <div class="ui basic green button">Approve</div>
-                            <div class="ui basic red button">Decline</div>
-                        </div>
+                        <button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}" ng-clic="">Show Console</button>
                     </div>
                 </div>
             </div>
