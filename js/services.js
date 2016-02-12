@@ -2,7 +2,7 @@
 
 angular.module('services', [])
 .constant('API_Endpoint', '/virtualbox/endpoints/api.php')
-.factory('VM', ['$http', 'API_Endpoint', function($http, API) {
+.factory('VM', ['$http', '$q', 'API_Endpoint', function($http, $q, API) {
     var self = this;
     
     this.data = {
@@ -22,7 +22,7 @@ angular.module('services', [])
     
     this.getList = function(fn, params, persist) {
         self.state.List.loading = true;
-        
+        var arr = [];
         return $http({
             method: 'POST',
             url: API,
@@ -35,16 +35,22 @@ angular.module('services', [])
         })
         .then(function(response) {
             angular.forEach(response.data.data.responseData, function(value, key) {
-                self.getDetail("machineGetDetails", {"vm" : value.id}, null, value.state);
+                var job = $q.defer();
+                var promise = job.promise;
+                self.getDetail("machineGetDetails", {"vm" : value.id}, null, value.state, job);
+                arr.push(promise)
             });
         })
         .finally(function() {
-            self.state.List.loaded = true;
-            self.state.List.loading = false;
+            $q.all(arr).then(function() {
+                self.state.List.loaded = true;
+                self.state.List.loading = false;
+            });
+            
         });
     };
     
-    this.getDetail = function(fn, params, persist, state) {
+    this.getDetail = function(fn, params, persist, state, job) {
         return $http({
             method: 'POST',
             url: API,
@@ -58,6 +64,7 @@ angular.module('services', [])
         .then(function(response) {
             response.data.data.responseData.state = state;
             self.data.VMs[response.data.data.responseData.id] = response.data.data.responseData;
+            job.resolve('done');
         });
     };
     
