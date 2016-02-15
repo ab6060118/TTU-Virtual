@@ -48,7 +48,8 @@
                         </div>
                     </div>
                     <div class="extra content">
-                        <button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}" ng-clic="">Show Console</button>
+                        <a class="" href="{{downloadRDP(VM.id, VM.RDPPort, VM.name)}}"  ng-if="VM.RDPPort"><button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}">Download RDP</button></a>
+                        <button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}" ng-if="!VM.RDPPort">Download RDP</button>
                     </div>
                 </div>
             </div>

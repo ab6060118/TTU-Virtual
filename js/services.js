@@ -2,9 +2,15 @@
 
 angular.module('services', [])
 
-.constant('API_Endpoint', '/virtualbox/endpoints/api.php')
+.constant('API_Endpoint', {
+    API: '/virtualbox/endpoints/api.php',
+    RDP: '/virtualbox/endpoints/rdp.php',
+})
+.constant('CONFIG', {
+    'HOST': location.host,
+})
 
-.factory('VM', ['$http', '$q', 'API_Endpoint', function($http, $q, API) {
+.factory('VM', ['$http', '$q', '$location', 'API_Endpoint', 'CONFIG', function($http, $q, $location, API, CONFIG) {
     var self = this;
     
     this.data = {
@@ -27,7 +33,7 @@ angular.module('services', [])
         var arr = [];
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn: fn,
@@ -52,10 +58,10 @@ angular.module('services', [])
         });
     };
     
-    this.getDetail = function(fn, params, persist, state, job) {
+    this.getDetail = function(fn, params, persist, state, defer) {
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn : fn,
@@ -66,14 +72,49 @@ angular.module('services', [])
         .then(function(response) {
             response.data.data.responseData.state = state;
             self.data.VMs[response.data.data.responseData.id] = response.data.data.responseData;
-            job.resolve('done');
+
+            if(state == 'Running') {
+                var runtimeDefer = $q.defer();
+                var promise = runtimeDefer.promise;
+
+                promise.then(function() {
+                    defer.resolve('done');
+                });
+
+                self.getRuntimeData('machineGetRuntimeData', {'vm': response.data.data.responseData.id}, null, runtimeDefer);
+            }
+
+            if(undefined == promise) {
+                defer.resolve('done');
+            }
         });
     };
+
+    this.getRuntimeData = function(fn, params, persist, defer) {
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn : fn,
+                params : params,
+                persist: persist
+            }),
+        })
+        .then(function(response) {
+            self.data.VMs[response.data.data.responseData.id].RDPPort = response.data.data.responseData.VRDEServerInfo ? response.data.data.responseData.VRDEServerInfo.port : undefined;
+            defer.resolve('done');
+        });
+    }
+
+    this.downloadRDP = function(id, port, name) {
+        return API.RDP + '?host=' + CONFIG.HOST + '&port=' + port + '&id=' + id + '&vm=' + name;
+    }
     
     this.powerUp = function(fn, params, persist) {
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn : fn,
@@ -86,7 +127,7 @@ angular.module('services', [])
     this.powerDown = function(fn, params, persist) {
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn : fn,
@@ -99,7 +140,7 @@ angular.module('services', [])
     this.progressGet = function(fn, params, persist) {
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn: fn,
@@ -139,7 +180,7 @@ angular.module('services', [])
         this.state.login.loging = true;
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn: fn,
@@ -164,7 +205,7 @@ angular.module('services', [])
     this.getSession = function(defer) {
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn: 'getSession',
@@ -186,7 +227,7 @@ angular.module('services', [])
     this.logout = function() {
         return $http({
             method: 'POST',
-            url: API,
+            url: API.API,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn: 'logout',

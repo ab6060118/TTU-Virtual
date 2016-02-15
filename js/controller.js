@@ -3,7 +3,7 @@
 angular.module('controllers', [])
 .controller('DashboardCtrl', ['$scope', function($scope) {
 }])
-.controller('VMListCtrl', ['$scope', '$route', '$interval', 'VM', function($scope, $route, $interval, VM) {
+.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', 'VM', function($scope, $route, $interval, $q, VM) {
     $scope.VM = VM;
     $scope.VM.stateReset();
     
@@ -23,6 +23,7 @@ angular.module('controllers', [])
     
     $scope.powerUp = function(id) {
         $scope.VM.data.VMs[id].state = 'Starting';
+
         $scope.VM.powerUp('machineSetState', {"vm":id, "state":"powerUp"}, null)
         .then(function(response) {
             response = response.data.data;
@@ -32,6 +33,11 @@ angular.module('controllers', [])
                     if(response.data.data.responseData.info.completed) {
                         $scope.VM.data.VMs[id].state = 'Running';
                         $interval.cancel(timer);
+
+                        var runtimeDefer = $q.defer();
+                        var promise = runtimeDefer.promise;
+
+                        $scope.VM.getRuntimeData('machineGetRuntimeData', {'vm': id}, null, runtimeDefer);
                     }
                 });
             }, 1500);
@@ -39,6 +45,7 @@ angular.module('controllers', [])
     };
 
     $scope.powerDown = function(id) {
+        $scope.VM.data.VMs[id].RDPPort = undefined;
         $scope.VM.data.VMs[id].state = 'Closing';
         $scope.VM.powerDown('machineSetState', {"vm":id, "state":"powerDown"}, null)
         .then(function(response) {
@@ -54,6 +61,10 @@ angular.module('controllers', [])
             }, 1500);
         });
     };
+
+    $scope.downloadRDP = function(id, port, name) {
+        return $scope.VM.downloadRDP(id, port, name);
+    }
 
     $scope.$on('cancelCreating', function() {
         $scope.state.creating = false;
