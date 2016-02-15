@@ -16,7 +16,7 @@
     <script src="./js/core.js"></script>
 </head>
 <body> 
-    <div class="ui labeled icon menu">
+    <div class="ui labeled icon menu" ng-if="isLogined">
         <div class="ui container">
             <a class="item" href="#/dashboard">
                 <i class="dashboard icon"></i>
@@ -30,7 +30,7 @@
                 <i class="disk outline icon"></i>
                 Image
             </a>
-            <a class="item right">
+            <a class="item right" href="#/logout">
                 <i class="sign out icon"></i>
                 Logout
             </a>

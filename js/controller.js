@@ -88,5 +88,37 @@ angular.module('controllers', [])
 
     $scope.init();
 }])
+
 .controller('ImageListCtrl', ['$scope', function($scope) {
-}]);
+}])
+
+.controller('LoginCtrl', ['$scope', '$rootScope', 'Auth', function($scope, $rootScope, Auth) {
+    $scope.auth = Auth;
+
+    $scope.login = function(userInfo) {
+        $scope.auth.login('login', userInfo, null, $scope);
+    }
+
+    $scope.logout = function() {
+        Auth.logout();
+    }
+
+    $scope.reset = function() {
+        $scope.userInfo = {
+            u: '',
+            p: '',
+        };
+
+        $scope.errorMsg = undefined;
+    };
+
+    $scope.init = function() {
+        $scope.reset();
+    }
+
+    $scope.init();
+}])
+
+.controller('LogoutCtrl', function(Auth) {
+    Auth.logout();
+});

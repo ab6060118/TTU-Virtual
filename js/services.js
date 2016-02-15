@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('services', [])
+
 .constant('API_Endpoint', '/virtualbox/endpoints/api.php')
+
 .factory('VM', ['$http', '$q', 'API_Endpoint', function($http, $q, API) {
     var self = this;
     
@@ -118,5 +120,89 @@ angular.module('services', [])
         self.data.VMs = {};
     };
     
+    return this;
+}])
+
+.factory('Auth', ['$rootScope', '$http', '$location', 'API_Endpoint', function($rootScope, $http, $location,API) {
+    self = this;
+
+    $rootScope.isLogined = false;
+
+    this.state = {
+        login: {
+            loging: false,
+            logined: false,
+        }
+    };
+
+    this.login = function(fn, params, persist, scope) {
+        this.state.login.loging = true;
+        return $http({
+            method: 'POST',
+            url: API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: persist
+            })
+        })
+        .then(function(response) {
+            if(response.data.data.responseData.hasOwnProperty('valid') && response.data.data.responseData.valid) {
+                $rootScope.isLogined = true;
+                $location.path('/dashboard');
+            }
+            else {
+                scope.errorMsg = 'Invalid username or password.';
+            }
+        })
+        .finally(function() {
+            this.state.login.loging = false;
+        });
+    };
+
+    this.getSession = function(defer) {
+        return $http({
+            method: 'POST',
+            url: API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: 'getSession',
+                params: null,
+                persist: null
+            })
+        })
+        .then(function(response) {
+            if(response.data.data.responseData.hasOwnProperty('valid') && response.data.data.responseData.valid) {
+                $rootScope.isLogined = true;
+            }
+            else {
+                $rootScope.isLogined = false;
+            }
+            defer.resolve(true);
+        });
+    }
+
+    this.logout = function() {
+        return $http({
+            method: 'POST',
+            url: API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: 'logout',
+                params: null,
+                persist: null
+            })
+        })
+        .then(function(response) {
+            $rootScope.isLogined = false;
+            $location.path('/login');
+        });
+    }
+
+    this.isLogined = function() {
+        return $rootScope.isLogined;
+    };
+
     return this;
 }]);
