@@ -10,6 +10,10 @@ angular.module('services', [])
     'HOST': location.host,
 })
 
+.factory('Dashboard', function($http, API_Endpoint) {
+    
+})
+
 .factory('VM', ['$http', '$q', '$location', 'API_Endpoint', 'CONFIG', function($http, $q, $location, API, CONFIG) {
     var self = this;
     

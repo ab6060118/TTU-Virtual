@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('controllers', [])
-.controller('DashboardCtrl', ['$scope', function($scope) {
-}])
+.controller('DashboardCtrl', function($scope, VM, Dashboard) {
+    $scope.VM;
+})
 .controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', 'VM', function($scope, $route, $interval, $q, VM) {
     $scope.VM = VM;
     $scope.VM.stateReset();
