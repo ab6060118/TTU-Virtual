@@ -10,9 +10,42 @@ angular.module('services', [])
     'HOST': location.host,
 })
 
-.factory('Dashboard', function($http, API_Endpoint) {
-    
-})
+.factory('Dashboard', ['$http', 'API_Endpoint', function($http, API_Endpoint) {
+    var self = this;
+
+    this.state = {
+        Detail: {
+            loading: false,
+            loaded: false,
+        }
+    }
+
+    this.data = {
+        Host: {},
+    };
+
+    this.getHostDetail = function(fn, params, persist) {
+        self.state.Detail.loading = true;
+        return $http({
+            url: API_Endpoint,
+            method: 'POST',
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: persist
+            })
+        })
+        .then(function(reponse) {
+            self.Host = response.data.date.responseData;
+        })
+        .finally(function() {
+            self.state.Detail.loading = false;
+            self.state.Detail.loaded = true;
+        });
+    }
+
+    return this;
+}])
 
 .factory('VM', ['$http', '$q', '$location', 'API_Endpoint', 'CONFIG', function($http, $q, $location, API, CONFIG) {
     var self = this;
