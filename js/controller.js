@@ -1,12 +1,19 @@
 'use strict';
 
 angular.module('controllers', [])
-.controller('DashboardCtrl', function($scope, VM, Dashboard) {
-    $scope.VM;
-})
+.controller('DashboardCtrl', ['$scope', 'VM', 'Dashboard', function($scope, VM, Dashboard) {
+    $scope.VM = VM;
+    $scope.Dashboard = Dashboard;
+    $scope.VM.reset();
+
+    $scope.Dashboard.getHostDetail('hostGetDetails', null, null);
+    $scope.VM.getList('vboxGetMachines', null, null);
+}])
+
 .controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', 'VM', function($scope, $route, $interval, $q, VM) {
     $scope.VM = VM;
     $scope.VM.stateReset();
+    $scope.VM.reset();
     
     $scope.VM.getList('vboxGetMachines', null, null);
     
@@ -63,9 +70,19 @@ angular.module('controllers', [])
         });
     };
 
+    /*
+    $scope.export = function() {
+        var format = 'ovf-1.0';
+        var filename = 'home/user1/.config/VirtualBox/' + name + '_' + time.ova;
+        $scope.VM.export('applianceExport' {"format": format,
+                                            "file": filename,
+                                            "vms": {}});
+    };
+     * */
+
     $scope.downloadRDP = function(id, port, name) {
         return $scope.VM.downloadRDP(id, port, name);
-    }
+    };
 
     $scope.$on('cancelCreating', function() {
         $scope.state.creating = false;
@@ -80,6 +97,7 @@ angular.module('controllers', [])
     
     $scope.init();
 }])
+
 .controller('VMCreateFormCtrl', ['$scope', function($scope) {
     $scope.cancel = function(){
         $scope.$emit('cancelCreating');

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app', ['ngRoute', 'controllers', 'services'])
+angular.module('app', ['ngRoute', 'controllers', 'services', 'directives'])
 
 .constant('PUBLIC_PAGES', ['/login'])
 

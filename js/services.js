@@ -10,11 +10,15 @@ angular.module('services', [])
     'HOST': location.host,
 })
 
-.factory('Dashboard', ['$http', 'API_Endpoint', function($http, API_Endpoint) {
+.factory('Dashboard', ['$http', 'API_Endpoint', function($http, API) {
     var self = this;
 
     this.state = {
         Detail: {
+            loading: false,
+            loaded: false,
+        },
+        Memory: {
             loading: false,
             loaded: false,
         }
@@ -22,27 +26,51 @@ angular.module('services', [])
 
     this.data = {
         Host: {},
+        Memory: '',
     };
 
     this.getHostDetail = function(fn, params, persist) {
         self.state.Detail.loading = true;
         return $http({
-            url: API_Endpoint,
+            url: API.API,
             method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: $.param({
                 fn: fn,
                 params: params,
                 persist: persist
             })
         })
-        .then(function(reponse) {
-            self.Host = response.data.date.responseData;
+        .then(function(response) {
+            self.data.Host = response.data.data.responseData;
+            self.getHostMeminfo('hostGetMeminfo', null, null);
         })
         .finally(function() {
             self.state.Detail.loading = false;
             self.state.Detail.loaded = true;
         });
-    }
+    };
+
+    this.getHostMeminfo = function(fn, params, persist) {
+        self.state.Memory.loading = true;
+        return $http({
+            url: API.API,
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: persist
+            })
+        })
+        .then(function(response) {
+            self.data.Memory = self.data.Host.memorySize-response.data.data.responseData;
+        })
+        .finally(function() {
+            self.state.Memory.loading = false;
+            self.state.Memory.loaded = true;
+        });
+    };
 
     return this;
 }])
@@ -52,6 +80,8 @@ angular.module('services', [])
     
     this.data = {
         VMs: {},
+        Running: 0,
+        VMtotal: 0,
     };
     
     this.state = {
@@ -83,6 +113,11 @@ angular.module('services', [])
                 var job = $q.defer();
                 var promise = job.promise;
                 self.getDetail("machineGetDetails", {"vm" : value.id}, null, value.state, job);
+
+                if(value.state == 'Running')
+                    self.data.Running++;
+                self.data.VMtotal++;
+
                 arr.push(promise)
             });
         })
@@ -173,6 +208,19 @@ angular.module('services', [])
             }),
         });
     };
+
+    this.export = function() {
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn : fn,
+                params : params,
+                persist : persist
+            }),
+        });
+    }
     
     this.progressGet = function(fn, params, persist) {
         return $http({
@@ -198,6 +246,15 @@ angular.module('services', [])
         self.data.VMs = {};
     };
     
+
+    this.reset = function() {
+        this.data = {
+            VMs: {},
+            Running: 0,
+            VMtotal: 0,
+        };
+    }
+
     return this;
 }])
 

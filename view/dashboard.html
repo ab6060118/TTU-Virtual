@@ -1,4 +1,22 @@
 <div class="ui container">
     <h1 class="ui header left floated">Dashboard</h1>
     <div class="ui divider section clearing"></div>
+    <div class="ui items">
+        <div class="item">
+            <div class="ui tiny image">
+                <img src="img/computer.png">
+            </div>
+            <div class="middle aligned content">
+                <progress-bar ng-show="VM.state.List.loaded" used="{{VM.data.Running}}" total="{{VM.data.VMtotal}}" message="{{VM.data.Running}}/{{VM.data.VMtotal}}(Running / Total VM)"></progress-bar>
+            </div>
+        </div>
+        <div class="item">
+            <div class="ui tiny image">
+                <img src="img/memory.png">
+            </div>
+            <div class="middle aligned content">
+                <progress-bar ng-show="Dashboard.state.Detail.loaded" used="{{Dashboard.data.Memory}}" total="{{Dashboard.data.Host.memorySize}}" message="{{Dashboard.data.Memory}}/{{Dashboard.data.Host.memorySize}}MB"></progress-bar>
+            </div>
+        </div>
+    </div>
 </div>
