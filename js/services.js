@@ -209,7 +209,7 @@ angular.module('services', [])
         });
     };
 
-    this.export = function() {
+    this.exportVM = function(fn, params, persist) {
         return $http({
             method: 'POST',
             url: API.API,
