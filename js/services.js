@@ -27,6 +27,24 @@ angular.module('services', [])
     this.data = {
         Host: {},
         Memory: '',
+        System: {},
+    };
+
+    this.getSystemProperties = function(fn, params, persist, defer) {
+        return $http({
+            url: API.API,
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: persist
+            })
+        })
+        .then(function(response) {
+            self.data.System = response.data.data.responseData;
+            defer.resolve(true);
+        })
     };
 
     this.getHostDetail = function(fn, params, persist) {

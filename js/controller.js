@@ -10,8 +10,9 @@ angular.module('controllers', [])
     $scope.VM.getList('vboxGetMachines', null, null);
 }])
 
-.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', 'VM', function($scope, $route, $interval, $q, VM) {
+.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', '$timeout', 'VM', 'Dashboard', function($scope, $route, $interval, $q, $timeout, VM, Dashboard) {
     $scope.VM = VM;
+    $scope.Dashboard = Dashboard;
     $scope.VM.stateReset();
     $scope.VM.reset();
     
@@ -73,45 +74,56 @@ angular.module('controllers', [])
     };
 
     $scope.exportVM = function(id, name) {
-        var format = 'ovf-1.0';
-        var filename = 'home/user1/.config/VirtualBox/' + name + '_' + Date.now() + '.ova';
-        var vms = {};
-        vms[id] = {};
-        vms[id]["id"] = id;
-        vms[id]["name"] = name;
-        vms[id]["product"] = "";
-        vms[id]["product-url"] = "";
-        vms[id]["vendor"] = "";
-        vms[id]["vendor-url"] = "";
-        vms[id]["version"] = "";
-        vms[id]["description"] = "";
-        vms[id]["license"] = "";
-
         $scope.VM.data.VMs[id].state = 'Exporting';
 
-        $scope.VM.exportVM('applianceExport', {"format": format,
-                                            "file": filename,
-                                            "vms": vms,
-                                            "manifest": false,
-                                            "overwrite": 1}, null)
-        .then(function(response) {
-            response = response.data.data;
-            window.onbeforeunload = function(event) {
-                return 'Image is exporting !!, please don\'t reload the page.';
-            };
-            var timer = $interval(function() {
-                $scope.VM.data.VMs[id].state = 'Exporting';
-                $scope.VM.progressGet('progressGet', response.responseData, response.persist)
-                .then(function(response) {
+        var defer = $q.defer();
+        var promise = defer.promise;
+
+        $scope.Dashboard.getSystemProperties('vboxSystemPropertiesGet', null, null, defer);
+
+        promise.then(function() {
+            var format = 'ovf-1.0';
+            var filename = $scope.Dashboard.data.System.homeFolder + '/' + name + '_' + Date.now() + '.ova';
+            var vms = {};
+            vms[id] = {};
+            vms[id]["id"] = id;
+            vms[id]["name"] = name;
+            vms[id]["product"] = "";
+            vms[id]["product-url"] = "";
+            vms[id]["vendor"] = "";
+            vms[id]["vendor-url"] = "";
+            vms[id]["version"] = "";
+            vms[id]["description"] = "";
+            vms[id]["license"] = "";
+
+            $scope.VM.exportVM('applianceExport', {"format": format,
+                                                   "file": filename,
+                                                   "vms": vms,
+                                                   "manifest": false,
+                                                   "overwrite": 1}, null)
+            .then(function(response) {
+                response = response.data.data;
+                window.onbeforeunload = function(event) {
+                    return 'Image is exporting !!, please don\'t reload the page.';
+                };
+                var timer = $interval(function() {
                     $scope.VM.data.VMs[id].state = 'Exporting';
-                    if(response.data.data.responseData.info.completed) {
-                        window.onbeforeunload = null;
-                        $scope.VM.data.VMs[id].state = 'PoweredOff';
-                        $interval.cancel(timer);
-                    }
-                });
-            }, 1500);
+                    $scope.VM.progressGet('progressGet', response.responseData, response.persist)
+                    .then(function(response) {
+                        $scope.VM.data.VMs[id].state = 'Exporting';
+                        $('#' + id + '-progress').progress({percent: response.data.data.responseData.info.percent});
+                        if(response.data.data.responseData.info.completed) {
+                            window.onbeforeunload = null;
+                            $timeout(function() {
+                                $scope.VM.data.VMs[id].state = 'PoweredOff';
+                            }, 3000);
+                            $interval.cancel(timer);
+                        }
+                    });
+                }, 1500);
+            });
         });
+
     };
 
     $scope.downloadRDP = function(id, port, name) {
