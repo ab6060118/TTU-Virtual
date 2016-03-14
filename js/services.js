@@ -5,10 +5,67 @@ angular.module('services', [])
 .constant('API_Endpoint', {
     API: '/virtualbox/endpoints/api.php',
     RDP: '/virtualbox/endpoints/rdp.php',
+    IMAGE_API: 'api/image.php',
 })
+
 .constant('CONFIG', {
     'HOST': location.host,
 })
+
+.factory('Image', ['$http', '$q', 'Dashboard', 'API_Endpoint', function($http, $q, Dashboard, API) {
+    var self = this;
+
+    this.state = {
+        images: {
+            loading: false,
+            loaded: false,
+        }
+    };
+
+    this.data = {
+        images: [],
+    }
+
+    this.getList = function(params) {
+        self.state.images.loading = true;
+
+        var defer = $q.defer();
+        var promise = defer.promise;
+
+        Dashboard.getSystemProperties('vboxSystemPropertiesGet', null, null, defer);
+
+        promise.then(function() {
+            console.log(Dashboard.data.System.homeFolder);
+            params = {"path": Dashboard.data.System.homeFolder};
+            self.send('getList', params)
+            .then(function(response) {
+                self.data.images = response.data;
+            })
+            .finally(function() {
+                self.state.images.loading = false;
+                self.state.images.loaded = true;
+            });
+        });
+    };
+
+    this.remove = function(params) {
+        self.send('remove', parems);
+    }
+
+    this.send = function(fn, params) {
+        return $http({
+            url: API.IMAGE_API,
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params
+            })
+        });
+    };
+
+    return this;
+}])
 
 .factory('Dashboard', ['$http', 'API_Endpoint', function($http, API) {
     var self = this;

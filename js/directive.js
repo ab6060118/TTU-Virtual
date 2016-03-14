@@ -18,7 +18,6 @@ angular.module('directives', [])
                     },
                     percent: scope.percent,
                 });
-                console.log(scope.percent);
             });
         }
     };

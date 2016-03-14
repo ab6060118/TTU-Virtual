@@ -165,7 +165,17 @@ angular.module('controllers', [])
     $scope.init();
 }])
 
-.controller('ImageListCtrl', ['$scope', function($scope) {
+.controller('ImageListCtrl', ['$scope', 'Image', function($scope, Image) {
+    $scope.Image = Image;
+    $scope.Image.getList(null);
+
+    $scope.remove = function(image) {
+        $scope.Image.remove('remove', {"name": image.basename});
+    };
+
+    $scope.download = function(image) {
+        window.open(window.location.origin + "/virtual/ovafile/" + image.basename);
+    };
 }])
 
 .controller('LoginCtrl', ['$scope', '$rootScope', 'Auth', function($scope, $rootScope, Auth) {

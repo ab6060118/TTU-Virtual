@@ -5,10 +5,10 @@
         Upload Image
     </button>
     <div class="ui divider section clearing"></div>
-        <div class="ui items divided">
+        <div class="ui items divided" ng-repeat="image in Image.data.images">
             <div class="item">
                 <div class="content">
-                    <a class="header">Windows</a>
+                    <a class="header">{{image.basename}}</a>
                     <div class="description">
                     </div>
                     <div class="extra">
@@ -16,28 +16,7 @@
                             <i class="delete icon"></i>
                             Delete
                         </button>
-                        <button class="positive ui right floated button">
-                            <i class="download icon"></i>
-                            Download
-                        </button>
-                        <button class="ui teal right floated button">
-                            <i class="power icon"></i>
-                            Launch VM
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <a class="header">Ubuntu</a>
-                    <div class="description">
-                    </div>
-                    <div class="extra">
-                        <button class="negative ui right floated button">
-                            <i class="delete icon"></i>
-                            Delete
-                        </button>
-                        <button class="positive ui right floated button">
+                        <button class="positive ui right floated button" ng-click="download(image)">
                             <i class="download icon"></i>
                             Download
                         </button>
