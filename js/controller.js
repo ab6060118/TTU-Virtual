@@ -168,14 +168,37 @@ angular.module('controllers', [])
 .controller('ImageListCtrl', ['$scope', 'Image', function($scope, Image) {
     $scope.Image = Image;
     $scope.Image.getList(null);
+    $scope.fileName = undefined;
 
     $scope.remove = function(image) {
-        $scope.Image.remove('remove', {"name": image.basename});
+        $scope.Image.remove({"name": image.basename});
     };
 
     $scope.download = function(image) {
-        window.open(window.location.origin + "/virtual/ovafile/" + image.basename);
+        $scope.Image.download(image);
     };
+
+    $scope.upload = function(file) {
+        var fd = new FormData();
+        fd.append('file', file);
+        fd.append('fn', 'upload');
+        fd.append('params', null);
+
+        window.onbeforeunload = function(event) {
+            return 'Image is uploading !!, please don\'t reload the page.';
+        };
+        $scope.Image.state.images.uploading = true;
+
+        $scope.Image.upload(fd)
+        .success(function(response) {
+            console.log(response);
+        })
+        .finally(function() {
+            $scope.Image.getList(null);
+            $scope.Image.state.images.uploading = false;
+            window.onbeforeunload = null;
+        });
+    }
 }])
 
 .controller('LoginCtrl', ['$scope', '$rootScope', 'Auth', function($scope, $rootScope, Auth) {

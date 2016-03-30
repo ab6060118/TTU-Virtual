@@ -1,31 +1,36 @@
 <div class="ui container">
     <h1 class="ui header left floated">Image</h1>
-    <button class="ui teal button right floated">
+
+    <label for="file" class="ui teal button right floated" ng-class="{loading : Image.state.images.uploading}" >
+        <input type="file" id="file" style="display:none" accept=".ova" onchange="angular.element(this).scope().upload(this.files[0])">
         <i class="upload icon"></i>
         Upload Image
-    </button>
+    </label>
+
     <div class="ui divider section clearing"></div>
-        <div class="ui items divided" ng-repeat="image in Image.data.images">
-            <div class="item">
-                <div class="content">
-                    <a class="header">{{image.basename}}</a>
-                    <div class="description">
-                    </div>
-                    <div class="extra">
-                        <button class="negative ui right floated button">
-                            <i class="delete icon"></i>
-                            Delete
-                        </button>
-                        <button class="positive ui right floated button" ng-click="download(image)">
-                            <i class="download icon"></i>
-                            Download
-                        </button>
-                        <button class="ui teal right floated button">
-                            <i class="power icon"></i>
-                            Launch VM
-                        </button>
-                    </div>
-                </div>
+    <div class="ui active centered large inline text loader" ng-show="Image.state.images.loading && !Image.state.images.loaded">Loading</div>
+
+    <div class="ui raised segments" ng-repeat="image in Image.data.images">
+        <div class="ui clearing segment" id="{{image.basename}}-image-item">
+            <h3>{{image.basename}}</h2>
+            <button class="negative ui right floated button" ng-click="remove(image)">
+                <i class="delete icon"></i>
+                Delete
+            </button>
+            <form method="POST" action="./api/image.php">
+                <input type="hidden" name="params" id="name" value="{{image.basename}}">
+                <input type="hidden" name="fn" id="name" value="download">
+                <button class="positive ui right floated button">
+                    <i class="download icon"></i>
+                    Download
+                </button>
+            </form>
+            <button class="ui teal right floated button">
+                <i class="power icon"></i>
+                Launch VM
+            </button>
+            <div class="ui active inverted dimmer" ng-if="image.status == 'deleting'">
+                <div class="ui text loader"></div>
             </div>
         </div>
     </div>

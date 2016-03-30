@@ -13,7 +13,7 @@
                     <div class="content">
                         <h3 class="ui header left floated">{{VM.name}}</h3>
                         <div class="ui green label right floated" ng-if="VM.state == 'Running'">Running</div>
-                        <div class="ui red label right floated" ng-if="VM.state == 'PoweredOff'">Power Off</div>
+                        <div class="ui red label right floated" ng-if="VM.state == 'PoweredOff' || VM.state == 'Aborted'">Power Off</div>
                         <div class="ui yellow label right floated" ng-if="VM.state == 'Exporting'">Exporting</div>
                         <div class="ui active small inline loader right floated" ng-if="VM.state == 'Starting' || VM.state == 'Closing'"></div>
                     </div>
@@ -35,9 +35,9 @@
                     </div>
                     <div class="extra content">
                         <div class="ui three buttons">
-                            <button class="ui green button" ng-class="{disabled : VM.state != 'PoweredOff', loading : VM.state == 'Starting'}" ng-click="powerUp(VM.id)">Start</button>
+                            <button class="ui green button" ng-class="{disabled : VM.state == 'Running', loading : VM.state == 'Starting'}" ng-click="powerUp(VM.id)">Start</button>
                             <button class="ui red button" ng-class="{disabled : VM.state != 'Running', loading : VM.state == 'Closing'}" ng-click="powerDown(VM.id)">Stop</button>
-                            <button class="ui yellow button" ng-class="{disabled : VM.state != 'PoweredOff', loading: VM.state == 'Exporting'}" ng-click="exportVM(VM.id, VM.name)">Export</button>
+                            <button class="ui yellow button" ng-class="{disabled : VM.state == 'Running', loading: VM.state == 'Exporting'}" ng-click="exportVM(VM.id, VM.name)">Export</button>
                         </div>
                     </div>
                     <div class="extra content">

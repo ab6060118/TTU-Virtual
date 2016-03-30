@@ -19,6 +19,7 @@ angular.module('services', [])
         images: {
             loading: false,
             loaded: false,
+            uploading: false,
         }
     };
 
@@ -29,27 +30,40 @@ angular.module('services', [])
     this.getList = function(params) {
         self.state.images.loading = true;
 
-        var defer = $q.defer();
-        var promise = defer.promise;
+        self.send('getList', params)
+        .then(function(response) {
+            self.data.images = response.data;
+        })
+        .finally(function() {
+            self.state.images.loading = false;
+            self.state.images.loaded = true;
+        });
+    };
 
-        Dashboard.getSystemProperties('vboxSystemPropertiesGet', null, null, defer);
-
-        promise.then(function() {
-            console.log(Dashboard.data.System.homeFolder);
-            params = {"path": Dashboard.data.System.homeFolder};
-            self.send('getList', params)
-            .then(function(response) {
-                self.data.images = response.data;
-            })
-            .finally(function() {
-                self.state.images.loading = false;
-                self.state.images.loaded = true;
-            });
+    this.download = function(params) {
+        self.send('download', params.basename)
+        .then(function(response) {
         });
     };
 
     this.remove = function(params) {
-        self.send('remove', parems);
+        self.data.images[params.name].status = "deleting";
+        self.send('remove', params)
+        .then(function(response) {
+            if (response.data.success) {
+                delete self.data.images[params.name];
+            }
+            else {
+                self.data.images[params.name].status = undefined;
+            }
+        });
+    }
+
+    this.upload = function(fd) {
+        return $http.post(API.IMAGE_API, fd, {
+                    headers: {'Content-Type': undefined },
+                    transformRequest: angular.identity
+                });
     }
 
     this.send = function(fn, params) {
