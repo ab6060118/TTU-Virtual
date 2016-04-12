@@ -44,6 +44,12 @@
                         <a class="" href="{{downloadRDP(VM.id, VM.RDPPort, VM.name)}}"  ng-if="VM.RDPPort"><button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}">Download RDP</button></a>
                         <button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}" ng-if="!VM.RDPPort">Download RDP</button>
                     </div>
+                    <div class="extra content">
+                        <button class="fluid ui red button" ng-class="{disabled : VM.state == 'Closing', loading : VM.state == 'Removing'}" ng-click="remove(VM.id)">
+                            <i class="trash outline icon"></i>
+                            Delete VM
+                        </button>
+                    </div>
                     <div class="ui bottom attached progress" ng-if="VM.state == 'Exporting'" id="{{VM.id}}-progress">
                         <div class="bar"></div>
                     </div>

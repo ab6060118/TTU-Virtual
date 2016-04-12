@@ -251,6 +251,19 @@ angular.module('services', [])
         });
     };
 
+    this.remove = function(fn, params, persist) {
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: persist
+            }),
+        });
+    };
+
     this.getRuntimeData = function(fn, params, persist, defer) {
         return $http({
             method: 'POST',
