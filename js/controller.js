@@ -10,7 +10,7 @@ angular.module('controllers', [])
     $scope.VM.getList('vboxGetMachines', null, null);
 }])
 
-.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', '$timeout', 'VM', 'Dashboard', function($scope, $route, $interval, $q, $timeout, VM, Dashboard) {
+.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', '$timeout', '$mdDialog','VM', 'Dashboard', function($scope, $route, $interval, $q, $timeout, $mdDialog, VM, Dashboard) {
     $scope.VM = VM;
     $scope.Dashboard = Dashboard;
     $scope.VM.stateReset();
@@ -74,6 +74,17 @@ angular.module('controllers', [])
     };
 
     $scope.remove = function(id) {
+    /*
+        var confirm = $mdDialog.confirm()
+                  .title('Would you like to delete your debt?')
+                  .textContent('All of the banks have agreed to forgive you your debts.')
+                  .ariaLabel('Lucky day')
+                  .targetEvent(ev)
+                  .ok('Please do it!')
+                  .cancel('Sounds like a scam');
+     * */
+
+/*
         $scope.VM.data.VMs[id].state = 'Removing';
         $scope.VM.remove('machineRemove', {"vm":id, "delete":"1"}, null)
         .then(function(response) {
@@ -89,6 +100,7 @@ angular.module('controllers', [])
                 });
             }, 1500);
         });
+ * */
     };
 
     $scope.exportVM = function(id, name) {

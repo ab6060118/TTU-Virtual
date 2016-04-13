@@ -1,7 +1,6 @@
 'use strict';
 
-angular.module('app', ['ngRoute', 'controllers', 'services', 'directives'])
-
+angular.module('app', ['ngMaterial', 'ngRoute', 'controllers', 'services', 'directives'])
 .constant('PUBLIC_PAGES', ['/login'])
 
 .config(['$routeProvider', function($routeProvider) {

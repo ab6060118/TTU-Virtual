@@ -209,6 +209,7 @@ angular.module('services', [])
 
                 arr.push(promise)
             });
+            //console.log(self.data.VMs);
         })
         .finally(function() {
             $q.all(arr).then(function() {
