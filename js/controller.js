@@ -73,34 +73,31 @@ angular.module('controllers', [])
         });
     };
 
-    $scope.remove = function(id) {
-    /*
-        var confirm = $mdDialog.confirm()
-                  .title('Would you like to delete your debt?')
+    $scope.remove = function(ev, id, name) {
+        var confirm = $mdDialog.confirm({hasBackdrop:false})
                   .textContent('All of the banks have agreed to forgive you your debts.')
                   .ariaLabel('Lucky day')
                   .targetEvent(ev)
-                  .ok('Please do it!')
-                  .cancel('Sounds like a scam');
-     * */
+                  .ok('Yes!')
+                  .cancel('No!');
 
-/*
-        $scope.VM.data.VMs[id].state = 'Removing';
-        $scope.VM.remove('machineRemove', {"vm":id, "delete":"1"}, null)
-        .then(function(response) {
-            response = response.data.data;
-            var timer = $interval(function() {
-                $scope.VM.data.VMs[id].state = 'Removing';
-                $scope.VM.progressGet('progressGet', response.responseData, response.persist)
-                .then(function(response) {
-                    if(response.data.data.responseData.info.completed) {
-                        delete $scope.VM.data.VMs[id];
-                        $interval.cancel(timer);
-                    }
-                });
-            }, 1500);
+        $mdDialog.show(confirm).then(function() {
+            $scope.VM.data.VMs[id].state = 'Removing';
+            $scope.VM.remove('machineRemove', {"vm":id, "delete":"1"}, null)
+            .then(function(response) {
+                response = response.data.data;
+                var timer = $interval(function() {
+                    $scope.VM.data.VMs[id].state = 'Removing';
+                    $scope.VM.progressGet('progressGet', response.responseData, response.persist)
+                    .then(function(response) {
+                        if(response.data.data.responseData.info.completed) {
+                            delete $scope.VM.data.VMs[id];
+                            $interval.cancel(timer);
+                        }
+                    });
+                }, 1500);
+            });
         });
- * */
     };
 
     $scope.exportVM = function(id, name) {
