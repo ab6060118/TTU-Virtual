@@ -75,8 +75,7 @@ angular.module('controllers', [])
 
     $scope.remove = function(ev, id, name) {
         var confirm = $mdDialog.confirm({hasBackdrop:false})
-                  .textContent('All of the banks have agreed to forgive you your debts.')
-                  .ariaLabel('Lucky day')
+                  .textContent('Are you sure to delete the VM "' + name + '"?')
                   .targetEvent(ev)
                   .ok('Yes!')
                   .cancel('No!');
@@ -192,13 +191,21 @@ angular.module('controllers', [])
     $scope.init();
 }])
 
-.controller('ImageListCtrl', ['$scope', 'Image', function($scope, Image) {
+.controller('ImageListCtrl', ['$scope', '$mdDialog','Image', function($scope, $mdDialog, Image) {
     $scope.Image = Image;
     $scope.Image.getList(null);
     $scope.fileName = undefined;
 
-    $scope.remove = function(image) {
-        $scope.Image.remove({"name": image.basename});
+    $scope.remove = function(ev, image) {
+        var confirm = $mdDialog.confirm({hasBackdrop:false})
+                  .textContent('Are you sure to delete the image ' + image.basename + '?')
+                  .targetEvent(ev)
+                  .ok('Yes!')
+                  .cancel('No!');
+
+        $mdDialog.show(confirm).then(function() {
+            $scope.Image.remove({"name": image.basename});
+        });
     };
 
     $scope.download = function(image) {
@@ -253,6 +260,24 @@ angular.module('controllers', [])
     }
 
     $scope.init();
+}])
+
+/*
+.controller('SettingCtrl', function() {
+})
+ * */
+
+.controller('UsersCtrl', ['$scope', 'Users', function($scope, Users) {
+    $scope.users = Users;
+
+    $scope.users.getUsers('getUsers', null, null);
+
+    $scope.remove = function(username) {
+    };
+
+    $scope.edit = function(username,isAdmin) {
+        $scope.users.edit('editUser', {"u" : username, "p" : "", "a" : isAdmin}, null);
+    };
 }])
 
 .controller('LogoutCtrl', function(Auth) {

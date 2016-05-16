@@ -209,7 +209,6 @@ angular.module('services', [])
 
                 arr.push(promise)
             });
-            //console.log(self.data.VMs);
         })
         .finally(function() {
             $q.all(arr).then(function() {
@@ -361,7 +360,73 @@ angular.module('services', [])
     return this;
 }])
 
-.factory('Auth', ['$rootScope', '$http', '$location', 'API_Endpoint', function($rootScope, $http, $location,API) {
+.factory('Users', ['$rootScope', '$http', 'API_Endpoint', function($rootScope, $http, API) {
+    self = this;
+
+    this.state = {
+        users: {
+            loading: false,
+            loaded: false,
+        }
+    };
+
+    this.data = {
+        users: {},
+    };
+
+    this.getUsers = function(fn, params, persist) {
+        self.state.users.loading = true;
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: persist
+            })
+        })
+        .then(function(response) {
+            self.data.users = response.data.data.responseData;
+        })
+        .finally(function() {
+            self.state.users.loading = false;
+            self.state.users.loaded = true;
+        });
+    };
+
+    this.remove = function(username) {
+        console.log(username);
+        self.data.users[username].removing = true;
+    };
+
+    this.edit = function(fn, params, persist) {
+        self.data.users[params.u].editing = true;
+        console.log(params.a);
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: null
+            })
+        })
+        .then(function(response) {
+            if(response.data.data.success) {
+                self.data.users[params.u].admin = params.a;
+            }
+        })
+        .finally(function() {
+            self.data.users[params.u].editing = false;
+        });
+    };
+
+    return this;
+}])
+
+.factory('Auth', ['$rootScope', '$http', '$location', 'API_Endpoint', function($rootScope, $http, $location, API) {
     self = this;
 
     $rootScope.isLogined = false;
@@ -411,11 +476,18 @@ angular.module('services', [])
             })
         })
         .then(function(response) {
-            if(response.data.data.responseData.hasOwnProperty('valid') && response.data.data.responseData.valid) {
+            var responseData = response.data.data.responseData;
+            if(responseData.hasOwnProperty('valid') && responseData.valid) {
                 $rootScope.isLogined = true;
             }
             else {
                 $rootScope.isLogined = false;
+            }
+            if (responseData.admin) {
+                $rootScope.isAdmin = true;
+            }
+            else {
+                $rootScope.isAdmin = false;
             }
             defer.resolve(true);
         });

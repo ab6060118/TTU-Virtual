@@ -21,6 +21,10 @@ angular.module('app', ['ngMaterial', 'ngRoute', 'controllers', 'services', 'dire
             templateUrl: 'view/login.html',
             controller: 'LoginCtrl',
         })
+        .when('/users', {
+            templateUrl: 'view/users.html',
+            controller: 'UsersCtrl',
+        })
         .when('/logout', {
             templateUrl: 'view/login.html',
             controller: 'LogoutCtrl',
