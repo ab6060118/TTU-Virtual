@@ -35,7 +35,7 @@
                     </div>
                     <div class="extra content">
                         <div class="ui three buttons">
-                            <button class="ui green button" ng-class="{disabled : VM.state == 'Running', loading : VM.state == 'Starting'}" ng-click="powerUp(VM.id)">Start</button>
+                            <button class="ui green button" ng-class="{disabled : VM.state == 'Running' || VM.state == 'Exporting', loading : VM.state == 'Starting'}" ng-click="powerUp(VM.id)">Start</button>
                             <button class="ui red button" ng-class="{disabled : VM.state != 'Running', loading : VM.state == 'Closing'}" ng-click="powerDown(VM.id)">Stop</button>
                             <button class="ui yellow button" ng-class="{disabled : VM.state == 'Running', loading: VM.state == 'Exporting'}" ng-click="exportVM(VM.id, VM.name)">Export</button>
                         </div>
@@ -45,7 +45,7 @@
                         <button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}" ng-if="!VM.RDPPort">Download RDP</button>
                     </div>
                     <div class="extra content">
-                        <button class="fluid ui red button" ng-class="{disabled : VM.state == 'Running', loading : VM.state == 'Removing'}" ng-click="remove($event, VM.id)">
+                        <button class="fluid ui red button" ng-class="{disabled : VM.state == 'Running' || VM.state == 'Exporting', loading : VM.state == 'Removing'}" ng-click="remove($event, VM.id, VM.name)">
                             <i class="trash outline icon"></i>
                             Delete VM
                         </button>

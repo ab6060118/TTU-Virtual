@@ -38,7 +38,11 @@
                 <i class="disk outline icon"></i>
                 Image
             </a>
-            <a class="item right" href="#">
+            <a class="item right" href="#/users" ng-if="isAdmin">
+                <i class="users icon"></i>
+                Users
+            </a>
+            <a class="item" href="#" ng-class="{right : isAdmin == false}">
                 <i class="setting icon"></i>
                 Setting
             </a>

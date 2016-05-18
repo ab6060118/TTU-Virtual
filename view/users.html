@@ -1,0 +1,55 @@
+<div class="ui container">
+    <h1 class="ui header left floated">Users</h1>
+    <div class="ui divider section clearing"></div>
+    <div class="ui active centered large inline text loader" ng-show="users.state.users.loading && !users.state.users.loaded">Loading</div>
+    <form class="ui small form" name="createUserForm">
+        <div class="three fields">
+            <div class="field">
+                <div class="ui left icon input">
+                    <i class="user icon"></i>
+                    <input placeholder="Username" type="text" ng-model="userInfo.u" required>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui left icon input">
+                    <i class="lock icon"></i>
+                    <input placeholder="Password" type="password" ng-model="userInfo.p" required>
+                </div>
+            </div>
+            <div class="field">
+                <button class="ui teal button" type="submit" ng-class="{disabled: !createUserForm.$valid}", ng-click="create(userInfo)">
+                    <i class="icon add user"></i>
+                    Create user
+                </button>
+            </div>
+        </div>
+    </form>
+    <table class="ui single line celled table" ng-show="!users.state.users.loading && users.state.users.loaded">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Action</th>
+                <th class="center aligned">Is Admin</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="(key, user) in users.data.users">
+                <td>{{user.username}}</td>
+                <td>
+                    <button class="mini ui button" ng-class="{loading : user.editing, orange: user.admin, green:!user.admin}" ng-click="edit(user.username,!user.admin)">
+                        <i class="icon ban" ng-class="{ban:user.admin, add:!user.admin, user:!user.admin}"></i>
+                        {{user.admin ? 'Remove Admin' : 'Add Admin'}}
+                    </button>
+                    <button class="mini ui red button" ng-class="{loading : user.removing}" ng-click="remove(ev, user.username)">
+                        <i class="icon trash"></i>
+                        Delete
+                    </button>
+                </td>
+                <td class="center aligned">
+                    <i class="large green checkmark icon" ng-if="user.admin"></i>
+                    <i class="large red close icon" ng-if="!user.admin"></i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

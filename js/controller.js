@@ -267,17 +267,49 @@ angular.module('controllers', [])
 })
  * */
 
-.controller('UsersCtrl', ['$scope', 'Users', function($scope, Users) {
+.controller('UsersCtrl', ['$scope', '$mdDialog', 'Users', function($scope, $mdDialog, Users) {
     $scope.users = Users;
 
     $scope.users.getUsers('getUsers', null, null);
 
-    $scope.remove = function(username) {
+    $scope.create = function(){
+        $scope.users.create('editUser', $scope.userInfo, null)
+        .finally(function() {
+            $scope.reset();
+        });
+    };
+
+    $scope.remove = function(ev, username) {
+        var confirm = $mdDialog.confirm({hasBackdrop:false})
+                  .textContent('Are you sure to delete the user "' + username + '"?')
+                  .targetEvent(ev)
+                  .ok('Yes!')
+                  .cancel('No!');
+
+        $mdDialog.show(confirm).then(function() {
+            $scope.users.remove('delUser', {"u" : username}, null);
+        });
     };
 
     $scope.edit = function(username,isAdmin) {
         $scope.users.edit('editUser', {"u" : username, "p" : "", "a" : isAdmin}, null);
     };
+
+    $scope.reset = function() {
+        $scope.userInfo = {
+            u: '',
+            p: '',
+            a: false,
+        };
+
+        $scope.errorMsg = undefined;
+    };
+
+    $scope.init = function() {
+        $scope.reset();
+    }
+
+    $scope.init();
 }])
 
 .controller('LogoutCtrl', function(Auth) {

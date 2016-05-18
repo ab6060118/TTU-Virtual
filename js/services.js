@@ -387,6 +387,7 @@ angular.module('services', [])
             })
         })
         .then(function(response) {
+            delete response.data.data.responseData[$rootScope.username];
             self.data.users = response.data.data.responseData;
         })
         .finally(function() {
@@ -395,9 +396,48 @@ angular.module('services', [])
         });
     };
 
-    this.remove = function(username) {
-        console.log(username);
-        self.data.users[username].removing = true;
+    this.create = function(fn, params, persist) {
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded;  charset=UTF-8',
+                      'Accept': 'application/json, text/javascript, */*; q=0.01',
+                      'X-Requested-With': 'XMLHttpRequest'},
+            data: {
+                "fn": fn,
+                "params": params,
+                "persist": null
+            }
+        })
+        .then(function(response) {
+            if(response.data.data.success) {
+                self.data.users[params.u] = {};
+                self.data.users[params.u].username = params.u;
+                self.data.users[params.u].admin = 0;
+            }
+        });
+    };
+
+    this.remove = function(fn, params, persist) {
+        self.data.users[params.u].removing = true;
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded;  charset=UTF-8',
+                      'Accept': 'application/json, text/javascript, */*; q=0.01',
+                      'X-Requested-With': 'XMLHttpRequest'},
+            data: {
+                "fn": fn,
+                "params": params,
+                "persist": null
+            }
+        })
+        .then(function(response) {
+            delete self.data.users[params.u];
+        })
+        .finally(function() {
+            self.data.users[params.u].removing = false;
+        });
     };
 
     this.edit = function(fn, params, persist) {
@@ -406,12 +446,14 @@ angular.module('services', [])
         return $http({
             method: 'POST',
             url: API.API,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            data: $.param({
-                fn: fn,
-                params: params,
-                persist: null
-            })
+            headers: {'Content-Type': 'application/x-www-form-urlencoded;  charset=UTF-8',
+                      'Accept': 'application/json, text/javascript, */*; q=0.01',
+                      'X-Requested-With': 'XMLHttpRequest'},
+            data: {
+                "fn": fn,
+                "params": params,
+                "persist": null
+            }
         })
         .then(function(response) {
             if(response.data.data.success) {
@@ -489,6 +531,7 @@ angular.module('services', [])
             else {
                 $rootScope.isAdmin = false;
             }
+            $rootScope.username = responseData.user;
             defer.resolve(true);
         });
     }
