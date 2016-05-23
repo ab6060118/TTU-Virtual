@@ -34,7 +34,7 @@ angular.module('app', ['ngMaterial', 'ngRoute', 'controllers', 'services', 'dire
         });
 }])
 
-.run(function($rootScope, $location, $q, Auth, PUBLIC_PAGES) {
+.run(function($rootScope, $location, $q, $http, Auth, PUBLIC_PAGES) {
     $rootScope.$on('$routeChangeStart', function() {
         var defer = $q.defer();
         var promise = defer.promise;

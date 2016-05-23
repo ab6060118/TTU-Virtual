@@ -6,6 +6,7 @@ angular.module('services', [])
     API: '/virtualbox/endpoints/api.php',
     RDP: '/virtualbox/endpoints/rdp.php',
     IMAGE_API: 'api/image.php',
+    HOOK: 'api/hook.php',
 })
 
 .constant('CONFIG', {
@@ -556,6 +557,22 @@ angular.module('services', [])
     this.isLogined = function() {
         return $rootScope.isLogined;
     };
+
+    return this;
+}])
+
+.factory('Hook', ['$http', '$rootScope', 'API_Endpoint',function($http, $rootScope, API) {
+    var self = this;
+
+    this.emit = function(params) {
+        var config =  { 
+                          headers : { 
+                              'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;' 
+                          },
+                      };
+        params.username = $rootScope.username;
+        return $http.post(API.HOOK, $.param(params), config);
+    }
 
     return this;
 }]);

@@ -10,7 +10,7 @@ angular.module('controllers', [])
     $scope.VM.getList('vboxGetMachines', null, null);
 }])
 
-.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', '$timeout', '$mdDialog','VM', 'Dashboard', function($scope, $route, $interval, $q, $timeout, $mdDialog, VM, Dashboard) {
+.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', '$timeout', '$mdDialog','VM', 'Dashboard', 'Hook',function($scope, $route, $interval, $q, $timeout, $mdDialog, VM, Dashboard, Hook) {
     $scope.VM = VM;
     $scope.Dashboard = Dashboard;
     $scope.VM.stateReset();
@@ -18,6 +18,8 @@ angular.module('controllers', [])
     
     $scope.VM.getList('vboxGetMachines', null, null);
     
+    Hook.emit({vmname:'test123', fn:'createVM'});
+
     $scope.state = {
         creating: false,
     };
