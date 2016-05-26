@@ -202,7 +202,7 @@ angular.module('services', [])
             angular.forEach(response.data.data.responseData, function(value, key) {
                 var job = $q.defer();
                 var promise = job.promise;
-                self.getDetail("machineGetDetails", {"vm" : value.id}, null, value.state, job);
+                self.getDetail("machineGetDetails", {"vm" : value.id}, null, value.state, job, value.owner, value.name);
 
                 if(value.state == 'Running')
                     self.data.Running++;
@@ -220,7 +220,7 @@ angular.module('services', [])
         });
     };
     
-    this.getDetail = function(fn, params, persist, state, defer) {
+    this.getDetail = function(fn, params, persist, state, defer, owner, VMName) {
         return $http({
             method: 'POST',
             url: API.API,
@@ -234,6 +234,8 @@ angular.module('services', [])
         .then(function(response) {
             response.data.data.responseData.state = state;
             self.data.VMs[response.data.data.responseData.id] = response.data.data.responseData;
+            self.data.VMs[response.data.data.responseData.id].owner = owner;
+            self.data.VMs[response.data.data.responseData.id].name = VMName;
 
             if(state == 'Running') {
                 var runtimeDefer = $q.defer();

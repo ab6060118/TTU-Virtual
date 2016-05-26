@@ -13,7 +13,7 @@
     <div class="ui raised segments" ng-repeat="image in Image.data.images">
         <div class="ui clearing segment" id="{{image.basename}}-image-item">
             <h3>{{image.basename}}</h2>
-            <button class="negative ui right floated button" ng-click="remove($event,image)">
+            <button class="negative ui right floated button" ng-click="remove($event,image)" ng-if="isAdmin">
                 <i class="delete icon"></i>
                 Delete
             </button>
