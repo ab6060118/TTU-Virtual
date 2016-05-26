@@ -232,10 +232,12 @@ angular.module('services', [])
             }),
         })
         .then(function(response) {
+            var stringStart = VMName.indexOf("_") > 0 ? VMName.indexOf("_") + 1 : 0;
             response.data.data.responseData.state = state;
             self.data.VMs[response.data.data.responseData.id] = response.data.data.responseData;
             self.data.VMs[response.data.data.responseData.id].owner = owner;
-            self.data.VMs[response.data.data.responseData.id].name = VMName;
+            self.data.VMs[response.data.data.responseData.id].name = VMName.substring(stringStart, VMName.length);
+            console.log(VMName);
 
             if(state == 'Running') {
                 var runtimeDefer = $q.defer();
