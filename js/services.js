@@ -26,6 +26,7 @@ angular.module('services', [])
 
     this.data = {
         images: [],
+        descriptions: {},
     }
 
     this.getList = function(params) {
@@ -46,6 +47,28 @@ angular.module('services', [])
         .then(function(response) {
         });
     };
+
+    this.getAppliance = function(fn, params, defer) {
+        return $http({
+            url: API.API,
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            data: $.param({
+                fn: fn,
+                params: params,
+                persist: null,
+            })
+        })
+        .then(function(response){
+            if(response.data.data.success) {
+                self.data.descriptions = response.data.data.responseData.descriptions;
+                defer.resolve(true);
+            }
+            else {
+                defer.reject(false);
+            };
+        });
+    }
 
     this.remove = function(params) {
         self.data.images[params.name].status = "deleting";
@@ -237,7 +260,6 @@ angular.module('services', [])
             self.data.VMs[response.data.data.responseData.id] = response.data.data.responseData;
             self.data.VMs[response.data.data.responseData.id].owner = owner;
             self.data.VMs[response.data.data.responseData.id].name = VMName.substring(stringStart, VMName.length);
-            console.log(VMName);
 
             if(state == 'Running') {
                 var runtimeDefer = $q.defer();
@@ -253,6 +275,23 @@ angular.module('services', [])
             if(undefined == promise) {
                 defer.resolve('done');
             }
+        });
+    };
+
+    this.create = function(fn, params, persist) {
+        return $http({
+            method: 'POST',
+            url: API.API,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded;  charset=UTF-8',
+                      'Accept': 'application/json, text/javascript, */*; q=0.01',
+                      'X-Requested-With': 'XMLHttpRequest'},
+            data: {
+                "fn": fn,
+                "params": params,
+                "persist": null
+            }
+        })
+        .then(function(response) {
         });
     };
 
@@ -447,7 +486,6 @@ angular.module('services', [])
 
     this.edit = function(fn, params, persist) {
         self.data.users[params.u].editing = true;
-        console.log(params.a);
         return $http({
             method: 'POST',
             url: API.API,

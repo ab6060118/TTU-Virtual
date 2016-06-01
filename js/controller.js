@@ -10,7 +10,7 @@ angular.module('controllers', [])
     $scope.VM.getList('vboxGetMachines', null, null);
 }])
 
-.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', '$timeout', '$mdDialog','VM', 'Dashboard', 'Hook',function($scope, $route, $interval, $q, $timeout, $mdDialog, VM, Dashboard, Hook) {
+.controller('VMListCtrl', ['$scope', '$route', '$interval', '$q', '$timeout', '$mdDialog','VM', 'Dashboard', 'Hook', function($scope, $route, $interval, $q, $timeout, $mdDialog, VM, Dashboard, Hook) {
     $scope.VM = VM;
     $scope.Dashboard = Dashboard;
     $scope.VM.stateReset();
@@ -27,10 +27,6 @@ angular.module('controllers', [])
     $scope.templates = [{"name" : "vm-create-form", "url" : "view/vm-create-form.html"}];
 
     $scope.template = $scope.templates[0];
-
-    $scope.doSomething = function() {
-        $('.ui.dropdown').dropdown();
-    };
     
     $scope.powerUp = function(id) {
         $scope.VM.data.VMs[id].state = 'Starting';
@@ -172,11 +168,23 @@ angular.module('controllers', [])
     $scope.init();
 }])
 
-.controller('VMCreateFormCtrl', ['$scope', function($scope) {
+.controller('VMCreateFormCtrl', ['$scope', '$q', 'Image', function($scope, $q, Image) {
+    $scope.image = Image;
+    $scope.image.getList(null);
+
     $scope.cancel = function(){
         $scope.$emit('cancelCreating');
         $scope.reset();
     }
+
+    $scope.create = function(template) {
+        var defer = $q.defer();
+        var promise = defer.promise;
+        $scope.image.getAppliance('applianceReadInterpret', {"file": $scope.data.template}, defer);
+        promise.then(function() {
+            console.log($scope.image.data.descriptions);
+        });
+    };
     
     $scope.reset = function() {
         $scope.data = {};

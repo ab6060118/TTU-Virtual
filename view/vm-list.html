@@ -9,7 +9,7 @@
     <div class="ui grid" ng-show="VM.getObjLength(VM.data.VMs) && VM.state.List.loaded">
         <div ng-class="{'column eight wide': state.creating}">
             <div class="ui cards">
-                <div class="card" ng-repeat="(key, VM) in VM.data.VMs" ng-init="$last && doSomething()" ng-if="isAdmin">
+                <div class="card" ng-repeat="(key, VM) in VM.data.VMs" ng-if="VM.owner == username || isAdmin">
                     <div class="content">
                         <h3 class="ui header left floated">{{VM.name}}</h3>
                         <div class="ui green label right floated" ng-if="VM.state == 'Running'">Running</div>
@@ -56,92 +56,6 @@
                     </div>
                     <div class="ui bottom attached progress" ng-if="VM.state == 'Exporting'" id="{{VM.id}}-progress">
                         <div class="bar"></div>
-                    </div>
-                </div>
-                <h4 class="ui horizontal divider header" ng-if="!isAdmin">
-                    <i class="tag icon"></i>
-                    My VM
-                </h4>
-                <div class="card" ng-repeat="(key, VM) in VM.data.VMs" ng-init="$last && doSomething()" ng-if="VM.owner == username && !isAdmin">
-                    <div class="content">
-                        <h3 class="ui header left floated">{{VM.name}}</h3>
-                        <div class="ui green label right floated" ng-if="VM.state == 'Running'">Running</div>
-                        <div class="ui red label right floated" ng-if="VM.state == 'PoweredOff' || VM.state == 'Aborted'">Power Off</div>
-                        <div class="ui yellow label right floated" ng-if="VM.state == 'Exporting'">Exporting</div>
-                        <div class="ui active small inline loader right floated" ng-if="VM.state == 'Starting' || VM.state == 'Closing'"></div>
-                    </div>
-                    <div class="content">
-                        <div class="ui list">
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                CPU : {{VM.CPUCount}}
-                            </div>
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                Memory : {{VM.memorySize}} MB
-                            </div>
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                OS Type : {{VM.OSTypeDesc}}
-                            </div>
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                VM Owner : {{VM.owner}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="extra content">
-                        <div class="ui three buttons">
-                            <button class="ui green button" ng-class="{disabled : VM.state == 'Running' || VM.state == 'Exporting', loading : VM.state == 'Starting'}" ng-click="powerUp(VM.id)">Start</button>
-                            <button class="ui red button" ng-class="{disabled : VM.state != 'Running', loading : VM.state == 'Closing'}" ng-click="powerDown(VM.id)">Stop</button>
-                            <button class="ui yellow button" ng-class="{disabled : VM.state == 'Running', loading: VM.state == 'Exporting'}" ng-click="exportVM(VM.id, VM.name)">Export</button>
-                        </div>
-                    </div>
-                    <div class="extra content">
-                        <a class="" href="{{downloadRDP(VM.id, VM.RDPPort, VM.name)}}"  ng-if="VM.RDPPort"><button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}">Download RDP</button></a>
-                        <button class="fluid ui button" ng-class="{disabled : VM.state != 'Running'}" ng-if="!VM.RDPPort">Download RDP</button>
-                    </div>
-                    <div class="extra content">
-                        <button class="fluid ui red button" ng-class="{disabled : VM.state == 'Running' || VM.state == 'Exporting', loading : VM.state == 'Removing'}" ng-click="remove($event, VM.id, VM.name)">
-                            <i class="trash outline icon"></i>
-                            Delete VM
-                        </button>
-                    </div>
-                    <div class="ui bottom attached progress" ng-if="VM.state == 'Exporting'" id="{{VM.id}}-progress">
-                        <div class="bar"></div>
-                    </div>
-                </div>
-                <h4 class="ui horizontal divider header" ng-if="!isAdmin">
-                    <i class="tag icon"></i>
-                    Other VMs on this system
-                </h4>
-                <div class="card" ng-repeat="(key, VM) in VM.data.VMs" ng-init="$last && doSomething()" ng-if="VM.owner != username && !isAdmin">
-                    <div class="content">
-                        <h3 class="ui header left floated">{{VM.name}}</h3>
-                        <div class="ui green label right floated" ng-if="VM.state == 'Running'">Running</div>
-                        <div class="ui red label right floated" ng-if="VM.state == 'PoweredOff' || VM.state == 'Aborted'">Power Off</div>
-                        <div class="ui yellow label right floated" ng-if="VM.state == 'Exporting'">Exporting</div>
-                        <div class="ui active small inline loader right floated" ng-if="VM.state == 'Starting' || VM.state == 'Closing'"></div>
-                    </div>
-                    <div class="content">
-                        <div class="ui list">
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                CPU : {{VM.CPUCount}}
-                            </div>
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                Memory : {{VM.memorySize}} MB
-                            </div>
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                OS Type : {{VM.OSTypeDesc}}
-                            </div>
-                            <div class="item">
-                                <i class="right triangle icon"></i>
-                                VM Owner : {{VM.owner}}
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
