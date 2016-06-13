@@ -168,8 +168,9 @@ angular.module('controllers', [])
     $scope.init();
 }])
 
-.controller('VMCreateFormCtrl', ['$scope', '$q', 'Image', function($scope, $q, Image) {
+.controller('VMCreateFormCtrl', ['$scope', '$q', 'Image', 'VM', function($scope, $q, Image, VM) {
     $scope.image = Image;
+    $scope.VM = VM;
     $scope.image.getList(null);
 
     $scope.cancel = function(){
@@ -182,6 +183,8 @@ angular.module('controllers', [])
         var promise = defer.promise;
         $scope.image.getAppliance('applianceReadInterpret', {"file": $scope.data.template}, defer);
         promise.then(function() {
+            $scope.image.data.descriptions.push([true,true,true,true,true,true,true,true])
+            //$scope.VM.create('applianceImport', );
             console.log($scope.image.data.descriptions);
         });
     };
